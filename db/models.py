@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 
 User = get_user_model()
@@ -43,7 +44,7 @@ class Movie(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         related_name="orders",
         on_delete=models.CASCADE
     )
@@ -110,14 +111,13 @@ class Ticket(models.Model):
         max_seats = self.movie_session.cinema_hall.seats_in_row
         errors = {}
 
-        if self.row > max_rows:
-            errors["row"] = [f"row ({self.row}) "
-                             f"is out of range (1, {max_rows})"]
+        if self.row > max_rows or self.row < 1:
+            errors["row"] = (f"Row {self.row} is out "
+                             f"of valid range 1 to {max_rows}.")
 
-        if self.seat > max_seats:
-            errors["seat"] = [f"seat ({self.seat}) "
-                              f"is out of range (1, {max_seats})"]
-
+        if self.seat > max_seats or self.seat < 1:
+            errors["seat"] = (f"Seat {self.seat} is out "
+                              f"of valid range 1 to {max_seats}.")
         if errors:
             raise ValidationError(errors)
 
