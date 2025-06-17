@@ -9,9 +9,6 @@ class User(AbstractUser):
     pass
 
 
-User = get_user_model()
-
-
 class Genre(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -49,10 +46,12 @@ class Movie(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
+                             on_delete=models.CASCADE,
+                             related_name="orders")
 
-    def __str__(self) -> str:
-        return str(self.created_at)
+    def __str__(self):
+        return f"<Order: {self.created_at}>"
+
 
     class Meta:
         ordering = ["-created_at"]
@@ -102,11 +101,10 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def __str__(self) -> str:
-        return (
-            f"{self.movie_session.movie.title} {self.movie_session.show_time} "
-            f"(row: {self.row}, seat: {self.seat})"
-        )
+    def __str__(self):
+        return (f"<Ticket: {self.movie_session.movie.title} "
+                f"{self.movie_session.show_time} (row: {self.row}, "
+                f"seat: {self.seat})>")
 
     def clean(self) -> None:
         max_rows = self.movie_session.cinema_hall.rows
@@ -114,12 +112,12 @@ class Ticket(models.Model):
         errors = {}
 
         if self.row > max_rows or self.row < 1:
-            errors["row"] = (f"Row {self.row} is out "
-                             f"of valid range 1 to {max_rows}.")
+            errors["row"] = [f"row number must be in "
+                             f"available range: (1, rows): (1, {max_rows})"]
 
         if self.seat > max_seats or self.seat < 1:
-            errors["seat"] = (f"Seat {self.seat} is out "
-                              f"of valid range 1 to {max_seats}.")
+            errors["seat"] = [f"seat number must be in "
+                              f"available range: (1, seats_in_row): (1, {max_seats})"]
         if errors:
             raise ValidationError(errors)
 
