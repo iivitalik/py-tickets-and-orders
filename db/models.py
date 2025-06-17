@@ -48,7 +48,7 @@ class Order(models.Model):
                              on_delete=models.CASCADE,
                              related_name="orders")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<Order: {self.created_at}>"
 
     class Meta:
