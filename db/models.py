@@ -18,10 +18,19 @@ class Actor(models.Model):
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=255, db_index=True)
+    title = models.CharField(
+        max_length=255,
+        db_index=True
+    )
     description = models.TextField()
-    actors = models.ManyToManyField(to=Actor, related_name="movies")
-    genres = models.ManyToManyField(to=Genre, related_name="movies")
+    actors = models.ManyToManyField(
+        to=Actor,
+        related_name="movies"
+    )
+    genres = models.ManyToManyField(
+        to=Genre,
+        related_name="movies"
+    )
 
     def __str__(self) -> str:
         return self.title
@@ -29,7 +38,11 @@ class Movie(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(to=Actor, related_name="orders", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        to=Actor,
+        related_name="orders",
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-created_at"]
