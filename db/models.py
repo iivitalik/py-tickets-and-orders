@@ -48,6 +48,9 @@ class Order(models.Model):
         on_delete=models.CASCADE
     )
 
+    def __str__(self) -> str:
+        return str(self.created_at)
+
     class Meta:
         ordering = ["-created_at"]
 
@@ -97,13 +100,28 @@ class Ticket(models.Model):
     seat = models.IntegerField()
 
     def __str__(self) -> str:
-        return f"{self.movie_session}{self.row}{self.seat}"
+        return (
+            f"{self.movie_session.movie.title} {self.movie_session.show_time} "
+            f"(row: {self.row}, seat: {self.seat})"
+        )
 
     def clean(self) -> None:
-        if self.row > self.movie_session.cinema_hall.rows:
-            raise ValidationError("Invalid row number.")
-        if self.seat > self.movie_session.cinema_hall.seats_in_row:
-            raise ValidationError("Invalid seat number.")
+        max_rows = self.movie_session.cinema_hall.rows
+        max_seats = self.movie_session.cinema_hall.seats_in_row
+        errors = {}
+
+        if self.row > max_rows:
+            errors["row"] = [
+                f"row ({self.row}) is out of range: (1, {max_rows})"
+            ]
+
+        if self.seat > max_seats:
+            errors["seat"] = [
+                f"seat ({self.seat}) is out of range: (1, {max_seats})"
+            ]
+
+        if errors:
+            raise ValidationError(errors)
 
     def save(self, *args, **kwargs) -> None:
         self.full_clean()
