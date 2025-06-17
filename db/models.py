@@ -49,7 +49,7 @@ class Order(models.Model):
                              related_name="orders")
 
     def __str__(self) -> str:
-        return f"<Order: {self.created_at}>"
+        return f"{self.created_at}"
 
     class Meta:
         ordering = ["-created_at"]
@@ -100,9 +100,9 @@ class Ticket(models.Model):
     seat = models.IntegerField()
 
     def __str__(self) -> str:
-        return (f"<Ticket: {self.movie_session.movie.title} "
+        return (f"{self.movie_session.movie.title} "
                 f"{self.movie_session.show_time} (row: {self.row}, "
-                f"seat: {self.seat})>")
+                f"seat: {self.seat})")
 
     def clean(self) -> None:
         max_rows = self.movie_session.cinema_hall.rows
