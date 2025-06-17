@@ -5,8 +5,9 @@ from db.models import Order, Ticket
 
 User = get_user_model()
 
+
 @transaction.atomic
-def create_order(tickets, username, date=None):
+def create_order(tickets: str, username: str, date=None) -> None:
     user = User.objects.get(username=username)
     order = Order.objects.create(user=user)
     if date:
@@ -21,7 +22,7 @@ def create_order(tickets, username, date=None):
         )
     return order
 
-def get_orders(username=None):
+def get_orders(username: str=None) -> None:
     if username:
         return Order.objects.filter(user__username=username)
     return Order.objects.all()
