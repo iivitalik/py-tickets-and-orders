@@ -4,8 +4,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SECRET_KEY = "6few3nci_q_o@l1dlbk81%wcxe!*6r29yu629&d97!hiqat9fa"
 
-AUTH_USER_MODEL = "db.User"
-
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 DATABASES = {
