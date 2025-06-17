@@ -1,7 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
+
+class User(AbstractUser):
+    pass
 
 
 User = get_user_model()
@@ -43,11 +48,8 @@ class Movie(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL,
-        related_name="orders",
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return str(self.created_at)
