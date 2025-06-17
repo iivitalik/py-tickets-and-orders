@@ -105,20 +105,16 @@ class Ticket(models.Model):
             f"(row: {self.row}, seat: {self.seat})"
         )
 
-    def clean(self) -> None:
+    def clean(self):
         max_rows = self.movie_session.cinema_hall.rows
         max_seats = self.movie_session.cinema_hall.seats_in_row
         errors = {}
 
         if self.row > max_rows:
-            errors["row"] = [
-                f"row ({self.row}) is out of range: (1, {max_rows})"
-            ]
+            errors["row"] = [f"row ({self.row}) is out of range (1, {max_rows})"]
 
         if self.seat > max_seats:
-            errors["seat"] = [
-                f"seat ({self.seat}) is out of range: (1, {max_seats})"
-            ]
+            errors["seat"] = [f"seat ({self.seat}) is out of range (1, {max_seats})"]
 
         if errors:
             raise ValidationError(errors)
