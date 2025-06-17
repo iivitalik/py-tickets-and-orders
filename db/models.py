@@ -2,14 +2,13 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from django.contrib.auth import get_user_model
 
 
 class User(AbstractUser):
     pass
 
 
-class Genre(models.Model):
+class Genre(models.Model) -> None:
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self) -> str:
@@ -51,7 +50,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f"<Order: {self.created_at}>"
-
 
     class Meta:
         ordering = ["-created_at"]
@@ -101,7 +99,7 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (f"<Ticket: {self.movie_session.movie.title} "
                 f"{self.movie_session.show_time} (row: {self.row}, "
                 f"seat: {self.seat})>")
@@ -117,7 +115,8 @@ class Ticket(models.Model):
 
         if self.seat > max_seats or self.seat < 1:
             errors["seat"] = [f"seat number must be in "
-                              f"available range: (1, seats_in_row): (1, {max_seats})"]
+                              f"available range: (1, seats_in_row): "
+                              f"(1, {max_seats})"]
         if errors:
             raise ValidationError(errors)
 
