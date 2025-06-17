@@ -51,6 +51,7 @@ class Order(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+
 class CinemaHall(models.Model):
     name = models.CharField(max_length=255)
     rows = models.IntegerField()
