@@ -1,5 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Genre(models.Model):
@@ -39,14 +42,13 @@ class Movie(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        to=Actor,
+        to=User,
         related_name="orders",
         on_delete=models.CASCADE
     )
 
     class Meta:
         ordering = ["-created_at"]
-
 
 class CinemaHall(models.Model):
     name = models.CharField(max_length=255)
