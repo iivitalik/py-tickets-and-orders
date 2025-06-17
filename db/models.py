@@ -18,7 +18,7 @@ class Actor(models.Model):
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=255, db_index = True)
+    title = models.CharField(max_length=255, db_index=True)
     description = models.TextField()
     actors = models.ManyToManyField(to=Actor, related_name="movies")
     genres = models.ManyToManyField(to=Genre, related_name="movies")
@@ -30,6 +30,7 @@ class Movie(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(to=Actor, related_name="orders", on_delete=models.CASCADE)
+
     class Meta:
         ordering = ["-created_at"]
 
@@ -50,10 +51,14 @@ class CinemaHall(models.Model):
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
     cinema_hall = models.ForeignKey(
-        to=CinemaHall, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=CinemaHall,
+        on_delete=models.CASCADE,
+        related_name="movie_sessions"
     )
     movie = models.ForeignKey(
-        to=Movie, on_delete=models.CASCADE, related_name="movie_sessions"
+        to=Movie,
+        on_delete=models.CASCADE,
+        related_name="movie_sessions"
     )
 
     def __str__(self) -> str:
@@ -61,8 +66,16 @@ class MovieSession(models.Model):
 
 
 class Ticket(models.Model):
-    movie_session = models.ForeignKey(to="MovieSession", related_name="tickets", on_delete=models.CASCADE)
-    order = models.ForeignKey(to=Order, related_name="tickets", on_delete=models.CASCADE)
+    movie_session = models.ForeignKey(
+        to="MovieSession",
+        related_name="tickets",
+        on_delete=models.CASCADE
+    )
+    order = models.ForeignKey(
+        to=Order,
+        related_name="tickets",
+        on_delete=models.CASCADE
+    )
     row = models.IntegerField()
     seat = models.IntegerField()
 
@@ -71,14 +84,18 @@ class Ticket(models.Model):
 
     def clean(self) -> None:
         if self.row > self.movie_session.cinema_hall.rows:
-            raise ValidationError
+            raise ValidationError("Invalid row number.")
         if self.seat > self.movie_session.cinema_hall.seats_in_row:
-            raise ValidationError
+            raise ValidationError("Invalid seat number.")
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["movie_session", "row", "seat"], name="unique_session_row_seat")]
+            models.UniqueConstraint(
+                fields=["movie_session", "row", "seat"],
+                name="unique_session_row_seat"
+            )
+        ]

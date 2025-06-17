@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 @transaction.atomic
-def create_order(tickets: str, username: str, date=None) -> None:
+def create_order(tickets: str, username: str, date: int=None) -> None:
     user = User.objects.get(username=username)
     order = Order.objects.create(user=user)
     if date:
@@ -22,7 +22,8 @@ def create_order(tickets: str, username: str, date=None) -> None:
         )
     return order
 
+
 def get_orders(username: str=None) -> None:
     if username:
-        return Order.objects.filter(user__username=username)
+        return Order.objects.filter(user__username = username)
     return Order.objects.all()
